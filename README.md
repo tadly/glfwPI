@@ -1,5 +1,7 @@
 glfwPI - PictureIt test project
 ================================
+[![Build Status](https://travis-ci.org/Tadly/glfwPI.svg?branch=master)](https://travis-ci.org/Tadly/glfwPI)
+
 Just a test project I use to work on [PictureIt](https://github.com/linuxwhatelse/PictureIt)
 
 ## Build instructions
