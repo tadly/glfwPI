@@ -2,7 +2,7 @@
 #include <math.h>
 
 #include <GLFW/glfw3.h>
-#include <PictureIt/pictureit.h>
+#include <PictureIt/pictureit.hpp>
 
 int WINDOW_WIDTH  = 1280;
 int WINDOW_HEIGHT = 720;
