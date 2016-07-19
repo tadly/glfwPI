@@ -4,6 +4,25 @@ glfwPI - PictureIt test project
 
 Just a test project I use to work on [PictureIt](https://github.com/linuxwhatelse/PictureIt)
 
+## Requirements
+If you're on a typical linux installation (with xorg and pulseaudio)  
+you should be just fine.
+
+If you'r trying to build this project on a minimal linux system,  
+you might have to install some libs first though.
+
+The following **Ubuntu** package names may vary depending on your distribution:
+* libsndfile1-dev
+* libpulse-dev
+* libgl1-mesa-dev
+* libglu1-mesa-dev
+* libx11-dev
+* libxcursor-dev
+* libxi-dev
+* libxinerama-dev
+* libxrandr-dev
+* libxxf86vm-dev
+
 ## Build instructions
 Here, have some Copy&Paste help :)
 ```bash
@@ -21,8 +40,10 @@ After that, you should have a `bin/glfwPI` executable
 ## Usage
 Super easy (the command-line would tell you the same)
 ```bash
-bin/glfwPI </path/to/dir/with/images>
+bin/glfwPI <img-directory> -b [spectrum-bar-count] -a [audio-file]
 ```
+[Check here](http://www.mega-nerd.com/libsndfile/) for a list of supported audio formats
+(I tested \*.wav only though)
 
 On startup *glfwPI* will print some keyboard-shortcuts you
 can use to mess around with it :)
