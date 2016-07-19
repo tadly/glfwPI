@@ -1,6 +1,6 @@
 [submodule "dependencies/glfw"]
-	path = dependencies/glfw
+	path = 3rdParty/glfw
 	url = https://github.com/glfw/glfw
 [submodule "dependencies/PictureIt"]
-	path = dependencies/PictureIt
+	path = 3rdParty/PictureIt
 	url = https://github.com/linuxwhatelse/PictureIt

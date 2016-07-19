@@ -8,12 +8,12 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 find_package(CXX11 REQUIRED)
 
 
-set(DEPENDENCIES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/dependencies")
+set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdParty")
 
 
 # Include PictureIt
-add_subdirectory("${DEPENDENCIES_DIR}/PictureIt")
-include_directories("${DEPENDENCIES_DIR}/PictureIt/include")
+add_subdirectory("${3RDPARTY_DIR}/PictureIt")
+include_directories("${3RDPARTY_DIR}/PictureIt/include")
 list(APPEND DEPLIBS PictureIt)
 
 
@@ -22,8 +22,8 @@ set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
-add_subdirectory("${DEPENDENCIES_DIR}/glfw")
-include_directories("${DEPENDENCIES_DIR}/glfw/include")
+add_subdirectory("${3RDPARTY_DIR}/glfw")
+include_directories("${3RDPARTY_DIR}/glfw/include")
 list(APPEND DEPLIBS glfw ${GLFW_LIBRARIES})
 
 
