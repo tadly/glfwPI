@@ -46,7 +46,7 @@ include_directories(${PULSEAUDIOSIMPLE_INCLUDE_DIR})
 list(APPEND DEPLIBS ${PULSEAUDIOSIMPLE_LIBRARY})
 
 
-add_executable(${PROJECT_NAME} src/main.cpp src/audio.cpp)
+add_executable(${PROJECT_NAME} src/main.cpp src/audio_player.cpp)
 target_link_libraries(${PROJECT_NAME} ${DEPLIBS})
 
 

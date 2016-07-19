@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <PictureIt/pictureit.hpp>
 
-#include "audio.hpp"
+#include "audio_player.hpp"
 
 
 #define WINDOW_WIDTH 1280
