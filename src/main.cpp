@@ -53,7 +53,7 @@ static void keyboard(GLFWwindow* window, int key, int scancode, int action, int 
                 glfwGetWindowPos(window, &current_windowed_pos_x, &current_windowed_pos_y);
                 glfwGetWindowSize(window, &current_windowed_width, &current_windowed_height);
 
-                glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), NULL, NULL, mode->width, mode->height, 0);
+                glfwSetWindowMonitor(window, glfwGetPrimaryMonitor(), 0, 0, mode->width, mode->height, 0);
             } else {
                 glfwSetWindowMonitor(window, NULL, current_windowed_pos_x, current_windowed_pos_y, current_windowed_width, current_windowed_height, 0);
             }
