@@ -230,7 +230,7 @@ int main(int argc, char **argv) {
 
     // Print CLI usage if not enough sys args
     if (argc < 2) {
-        printf("usage: %s <img-directory> -b [spectrum-bar-count] -a [audio-file]\n", argv[0]);
+        printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file]\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 

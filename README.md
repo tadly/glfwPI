@@ -40,7 +40,7 @@ After that, you should have a `bin/glfwPI` executable
 ## Usage
 Super easy (the command-line would tell you the same)
 ```bash
-bin/glfwPI <img-directory> -b [spectrum-bar-count] -a [audio-file]
+bin/glfwPI img-directory [-b spectrum-bar-count] [-a audio-file]
 ```
 [Check here](http://www.mega-nerd.com/libsndfile/) for a list of supported audio formats
 (I tested \*.wav only though)
