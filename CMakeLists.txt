@@ -4,8 +4,12 @@ project(glfwPI CXX)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
 
-# We need C++11
-find_package(CXX11 REQUIRED)
+set(CMAKE_POSITION_INDEPENDENT_CODE 1)
+
+# Make sure we use C++11
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
 
 
 set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdParty")
@@ -31,7 +35,7 @@ list(APPEND DEPLIBS glfw ${GLFW_LIBRARIES})
 find_package(libsndfile REQUIRED)
 include_directories(${LIBSNDFILE_INCLUDE_DIR})
 include_directories(${LIBSNDFILE_INCLUDE_DIRS})
-list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY} ${LIBSNDFILE_LIBRARIES})
+list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY})
 
 
 # Include PulseAudio
@@ -40,13 +44,11 @@ include_directories(${PULSEAUDIO_INCLUDE_DIR})
 list(APPEND DEPLIBS ${PULSEAUDIO_LIBRARY})
 
 
-# Include PulseAudioSimple
-find_package(PulseAudioSimple REQUIRED)
-include_directories(${PULSEAUDIOSIMPLE_INCLUDE_DIR})
-list(APPEND DEPLIBS ${PULSEAUDIOSIMPLE_LIBRARY})
+set(SOURCES src/main.cpp
+            src/audio_player.cpp)
 
+add_executable(${PROJECT_NAME} ${SOURCES})
 
-add_executable(${PROJECT_NAME} src/main.cpp src/audio_player.cpp)
 target_link_libraries(${PROJECT_NAME} ${DEPLIBS})
 
 

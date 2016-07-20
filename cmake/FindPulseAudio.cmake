@@ -18,7 +18,7 @@ endif (PULSEAUDIO_INCLUDE_DIR AND PULSEAUDIO_LIBRARY)
 
 if (NOT WIN32)
    include(FindPkgConfig)
-   pkg_check_modules(PULSEAUDIO libpulse)
+   pkg_check_modules(PULSEAUDIO libpulse-simple)
    if(PULSEAUDIO_FOUND)
       set(PULSEAUDIO_LIBRARY ${PULSEAUDIO_LIBRARIES} CACHE FILEPATH "Path to the PulseAudio library")
       set(PULSEAUDIO_INCLUDE_DIR ${PULSEAUDIO_INCLUDEDIR} CACHE PATH "Path to the PulseAudio includes")
