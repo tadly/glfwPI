@@ -28,7 +28,6 @@ Here, have some Copy&Paste help :)
 ```bash
 git clone https://github.com/Tadly/glfwPI
 cd glfwPI
-git submodule update --init
 
 mkdir build && cd build
 cmake -DCMAKE_INSTALL_PREFIX=./install ../

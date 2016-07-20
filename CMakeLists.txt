@@ -16,18 +16,12 @@ set(3RDPARTY_DIR "${CMAKE_CURRENT_SOURCE_DIR}/3rdParty")
 
 
 # Include PictureIt
-add_subdirectory("${3RDPARTY_DIR}/PictureIt")
-include_directories("${3RDPARTY_DIR}/PictureIt/include")
-list(APPEND DEPLIBS PictureIt)
+include("cmake/depends/PictureIt/add_PictureIt.cmake")
+list(APPEND DEPLIBS PictureIt::PictureIt)
 
 
 # Include GLFW 
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-
-add_subdirectory("${3RDPARTY_DIR}/glfw")
-include_directories("${3RDPARTY_DIR}/glfw/include")
+include("cmake/depends/GLFW/add_GLFW.cmake")
 list(APPEND DEPLIBS glfw ${GLFW_LIBRARIES})
 
 
