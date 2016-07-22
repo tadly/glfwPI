@@ -7,6 +7,10 @@ include(ExternalProject)
 ExternalProject_Add(
     GLFW
 
+    # Use -DGLFW_LOCAL_SRC_DIR=<path>
+    URL               "${GLFW_LOCAL_SRC_DIR}"
+
+    # Otherwise download from github
     GIT_REPOSITORY    "https://github.com/glfw/glfw.git"
     GIT_TAG           "3.2"
 
