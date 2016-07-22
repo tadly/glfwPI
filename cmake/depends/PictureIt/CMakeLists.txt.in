@@ -7,14 +7,17 @@ include(ExternalProject)
 ExternalProject_Add(
     PictureIt
 
-    GIT_REPOSITORY    "https://github.com/linuxwhatelse/PictureIt"
+    GIT_REPOSITORY    "https://github.com/linuxwhatelse/PictureIt.git"
     GIT_TAG           "cmake"
 
-    SOURCE_DIR        "${CMAKE_BINARY_DIR}/3rdParty/PictureIt-src"
-    BINARY_DIR        "${CMAKE_BINARY_DIR}/3rdParty/PictureIt-build"
+    SOURCE_DIR        "${PICTUREIT_SRC_DIR}"
+    BINARY_DIR        "${PICTUREIT_BUILD_DIR}"
 
     CONFIGURE_COMMAND ""
     BUILD_COMMAND     ""
     INSTALL_COMMAND   ""
     TEST_COMMAND      ""
+
+    LOG_DOWNLOAD      1
+    LOG_UPDATE        1
 )
