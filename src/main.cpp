@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <PictureIt/pictureit.hpp>
 
-#include "audio_player.hpp"
+//#include "audio_player.hpp"
 
 
 #define WINDOW_WIDTH 1280
@@ -25,7 +25,7 @@ const char *audio_file_path = nullptr;
 
 GLFWwindow *window = nullptr;
 PictureIt *pi = nullptr;
-AudioPlayer *player = nullptr;
+//AudioPlayer *player = nullptr;
 
 int current_windowed_width = WINDOW_WIDTH;
 int current_windowed_height = WINDOW_HEIGHT;
@@ -35,9 +35,9 @@ int current_windowed_pos_y = 0;
 bool fullscreen = false;
 bool quit = false;
 
-static void signal_handler(int sig, siginfo_t *si, void *unused) {
-    quit = true;
-}
+//static void signal_handler(int sig, siginfo_t *si, void *unused) {
+//    quit = true;
+//}
 
 static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (action != GLFW_PRESS && action != GLFW_REPEAT)
@@ -174,24 +174,24 @@ void audio_data(float *data, int data_length) {
 }
 
 
-bool add_signal_handler() {
-    struct sigaction sa;
-
-    sigemptyset(&sa.sa_mask);
-    sa.sa_sigaction = signal_handler;
-
-    if (sigaction(SIGINT, &sa, NULL) == -1) {
-        printf("Can't set SIGINT handler!\n");
-        return false;
-    }
-
-    if (sigaction(SIGHUP, &sa, NULL) == -1) {
-        printf("Can't set SIGHUP handler!\n");
-        return false;
-    }
-
-    return true;
-}
+//bool add_signal_handler() {
+//    struct sigaction sa;
+//
+//    sigemptyset(&sa.sa_mask);
+//    sa.sa_sigaction = signal_handler;
+//
+//    if (sigaction(SIGINT, &sa, NULL) == -1) {
+//        printf("Can't set SIGINT handler!\n");
+//        return false;
+//    }
+//
+//    if (sigaction(SIGHUP, &sa, NULL) == -1) {
+//        printf("Can't set SIGHUP handler!\n");
+//        return false;
+//    }
+//
+//    return true;
+//}
 
 void show_help() {
     std::cout << "Available keyboard shortcuts:" << std::endl;
@@ -223,10 +223,10 @@ void show_help() {
 
 
 int main(int argc, char **argv) {
-    // Signal handling
-    if(!add_signal_handler()) {
-        exit(EXIT_FAILURE);
-    }
+    //// Signal handling
+    //if(!add_signal_handler()) {
+    //    exit(EXIT_FAILURE);
+    //}
 
     // Print CLI usage if not enough sys args
     if (argc < 2) {
@@ -305,12 +305,12 @@ int main(int argc, char **argv) {
     glfwMakeContextCurrent(window);
 
 
-    // Create an AudioPlayer so we have something
-    // to feed the spectrum with
-    player = new AudioPlayer(audio_data);
-    if (audio_file_path != nullptr && player->load(audio_file_path)) {
-        player->play();
-    }
+    //// Create an AudioPlayer so we have something
+    //// to feed the spectrum with
+    //player = new AudioPlayer(audio_data);
+    //if (audio_file_path != nullptr && player->load(audio_file_path)) {
+    //    player->play();
+    //}
 
 
     // Mainloop which renders PictureIt
@@ -330,9 +330,9 @@ int main(int argc, char **argv) {
     }
 
     // Cleanup
-    player->exit();
+    //player->exit();
 
-    delete player;
+    //delete player;
     delete pi;
 
     glfwDestroyWindow(window);
