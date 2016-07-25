@@ -16,9 +16,9 @@ endif()
 
 
 # Include PictureIt
+set(ASPLIB_MODULES_TO_BUILD SpectrumVisProcessor Signals)
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends/PictureIt/add_PictureIt.cmake")
 list(APPEND DEPLIBS PictureIt::PictureIt)
-
 
 # Include GLFW
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends/GLFW/add_GLFW.cmake")
@@ -45,6 +45,22 @@ else()
 endif()
 list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY})
 
+#include PortAudio
+include(cmake/cmake_helpers/importURLProject.cmake)
+importURLProject(PROJECT                portaudio
+                 URL "http://www.portaudio.com/archives"
+                 DOWNLOAD_NAME "pa_stable_v19_20140130.tgz")
+if(MSVC)
+  set(PA_USE_WASAPI ON)
+  set(PA_USE_WDMKS ON)
+  set(PA_USE_WMME ON)
+  set(PA_UNICODE_BUILD ON)
+endif()
+add_subdirectory(${portaudio_SOURCE_DIR})
+#add_library(portaudio_static::portaudio_static ALIAS portaudio_static)
+#set_target_properties(portaudio_static::portaudio_static PROPERTIES
+#                                                         INTERFACE_INCLUDE_DIRECTORIES "${portaudio_SOURCE_DIR}/include")                  
+list(APPEND DEPLIBS portaudio_static)
 
 # Include PulseAudio
 #find_package(PulseAudio REQUIRED)
