@@ -27,14 +27,17 @@ list(APPEND DEPLIBS glfw ${GLFW_LIBRARIES})
 
 
 # Include libsndfile
-#include(cmake/cmake_helpers/importURLProject.cmake)
-#    importURLProject(PROJ                libsndfile
-#                     URL "http://www.mega-nerd.com/libsndfile/files"
-#                     DOWNLOAD_NAME "libsndfile-1.0.27-w32.zip")
+if(MSVC)
+  include(cmake/cmake_helpers/importURLProject.cmake)
+  importURLProject(PROJECT                libsndfile
+                   URL "http://www.mega-nerd.com/libsndfile/files"
+                   DOWNLOAD_NAME "libsndfile-1.0.27-w32.zip")
+else()
+  find_package(libsndfile REQUIRED)
+  include_directories(${LIBSNDFILE_INCLUDE_DIR})
+  include_directories(${LIBSNDFILE_INCLUDE_DIRS})
+endif()
 #add_subdirectory(${KissFFT_SOURCE_DIR} ${KissFFT_BINARY_DIR})
-#find_package(libsndfile REQUIRED)
-#include_directories(${LIBSNDFILE_INCLUDE_DIR})
-#include_directories(${LIBSNDFILE_INCLUDE_DIRS})
 #list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY})
 
 
