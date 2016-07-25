@@ -1,4 +1,4 @@
-set(_DownloadProjectDir "${CMAKE_CURRENT_LIST_DIR}")
+set(_cmake_helpers_dir "${CMAKE_CURRENT_LIST_DIR}")
 
 include(CMakeParseArguments)
 
@@ -38,6 +38,7 @@ function(importURLProject)
     endif()
     if (NOT DL_ARGS_DOWNLOAD_DIR)
         set(DL_ARGS_DOWNLOAD_DIR "${DL_ARGS_PREFIX}/0download/${DL_ARGS_PROJECT}")
+        message(STATUS "DL_ARGS_DOWNLOAD_DIR=${DL_ARGS_DOWNLOAD_DIR}")
     endif()
 
     # Ensure the caller can know where to find the source and build directories
@@ -54,15 +55,15 @@ function(importURLProject)
     # Create and build a separate CMake project to carry out the download.
     # If we've already previously done these steps, they will not cause
     # anything to be updated, so extra rebuilds of the project won't occur.
-    configure_file("${_DownloadProjectDir}/importURLProject.CMakeLists.txt.in"
-                   "${DL_ARGS_DOWNLOAD_DIR}/CMakeLists.txt")
+    configure_file("${_cmake_helpers_dir}/importURLProject.CMakeLists.txt.in"
+                   "${DL_ARGS_BINARY_DIR}/CMakeLists.txt")
     execute_process(COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
                     ${OUTPUT_QUIET}
-                    WORKING_DIRECTORY "${DL_ARGS_DOWNLOAD_DIR}"
+                    WORKING_DIRECTORY "${DL_ARGS_BINARY_DIR}"
     )
     execute_process(COMMAND ${CMAKE_COMMAND} --build .
                     ${OUTPUT_QUIET}
-                    WORKING_DIRECTORY "${DL_ARGS_DOWNLOAD_DIR}"
+                    WORKING_DIRECTORY "${DL_ARGS_BINARY_DIR}"
     )
 
 endfunction()
