@@ -32,13 +32,18 @@ if(MSVC)
   importURLProject(PROJECT                libsndfile
                    URL "http://www.mega-nerd.com/libsndfile/files"
                    DOWNLOAD_NAME "libsndfile-1.0.27-w32.zip")
+  add_library(libsndfile::libsndfile UNKNOWN IMPORTED)
+  set_target_properties(libsndfile::libsndfile PROPERTIES
+                                         IMPORTED_LOCATION "${libsndfile_SOURCE_DIR}/lib/libsndfile-1.lib"
+                                         INTERFACE_INCLUDE_DIRECTORIES "${libsndfile_SOURCE_DIR}/include")                  
+  message(STATUS "libsndfile_BINARY_DIR=${libsndfile_SOURCE_DIR}")
+  set(LIBSNDFILE_LIBRARY libsndfile::libsndfile)
 else()
   find_package(libsndfile REQUIRED)
   include_directories(${LIBSNDFILE_INCLUDE_DIR})
   include_directories(${LIBSNDFILE_INCLUDE_DIRS})
 endif()
-#add_subdirectory(${KissFFT_SOURCE_DIR} ${KissFFT_BINARY_DIR})
-#list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY})
+list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY})
 
 
 # Include PulseAudio
