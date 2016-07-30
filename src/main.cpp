@@ -229,8 +229,8 @@ int main(int argc, char **argv) {
     //}
 
     // Print CLI usage if not enough sys args
-    if (argc < 2) {
-        printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file]\n", argv[0]);
+    if (argc < 3) {
+        printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file] [-d image-path]\n", argv[0]);
         exit(EXIT_FAILURE);
     }
 
@@ -245,8 +245,9 @@ int main(int argc, char **argv) {
             audio_file_path = argv[i+1];
             i++;
 
-        } else {
-            image_dir_path = argv[i];
+        } else if (strncmp(argv[i], "-d", 2) == 0) {
+            image_dir_path = argv[i + 1];
+            i++;
         }
     }
 
