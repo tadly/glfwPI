@@ -7,7 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <PictureIt/pictureit.hpp>
 
-//#include "audio_player.hpp"
+#include "audio_player.hpp"
 
 
 #define WINDOW_WIDTH 1280
@@ -25,7 +25,7 @@ const char *audio_file_path = nullptr;
 
 GLFWwindow *window = nullptr;
 PictureIt *pi = nullptr;
-//AudioPlayer *player = nullptr;
+AudioPlayer *player = nullptr;
 
 int current_windowed_width = WINDOW_WIDTH;
 int current_windowed_height = WINDOW_HEIGHT;
@@ -169,11 +169,6 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 
-void audio_data(float *data, int data_length) {
-    pi->audio_data(data, data_length);
-}
-
-
 //bool add_signal_handler() {
 //    struct sigaction sa;
 //
@@ -227,117 +222,130 @@ int main(int argc, char **argv) {
     //if(!add_signal_handler()) {
     //    exit(EXIT_FAILURE);
     //}
+    try
+    {
+        // Print CLI usage if not enough sys args
+        if (argc < 3) {
+          printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file] [-d image-path]\n", argv[0]);
+          exit(EXIT_FAILURE);
+        }
 
-    // Print CLI usage if not enough sys args
-    if (argc < 3) {
-        printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file] [-d image-path]\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
-    // Some simple argparsing
-    // Not super failsafe but'll do :)
-    for (int i = 1; i < argc; i++) {
-        if(strncmp(argv[i], "-b", 2) == 0) {
-            SPECTRUM_BAR_COUNT = atoi(argv[i+1]);
+        // Some simple argparsing
+        // Not super failsafe but'll do :)
+        for (int i = 1; i < argc; i++) {
+          if (strncmp(argv[i], "-b", 2) == 0) {
+            SPECTRUM_BAR_COUNT = atoi(argv[i + 1]);
             i++;
 
-        } else if(strncmp(argv[i], "-a", 2) == 0) {
-            audio_file_path = argv[i+1];
+          }
+          else if (strncmp(argv[i], "-a", 2) == 0) {
+            audio_file_path = argv[i + 1];
             i++;
 
-        } else if (strncmp(argv[i], "-d", 2) == 0) {
+          }
+          else if (strncmp(argv[i], "-d", 2) == 0) {
             image_dir_path = argv[i + 1];
             i++;
+          }
         }
-    }
 
-    // Print keyboard shortcuts
-    show_help();
-
-
-    // Initialize glfw
-    if (!glfwInit()) {
-        exit(EXIT_FAILURE);
-    }
-
-    // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "glfwPI", NULL, NULL);
-
-    if (!window) {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
-
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(2);
-
-    glfwSetKeyCallback(window, keyboard);
+        // Print keyboard shortcuts
+        show_help();
 
 
-    // Create PictureIt and set some intial properties
-    pi = new PictureIt(SPECTRUM_BAR_COUNT);
+        // Initialize glfw
+        if (!glfwInit()) {
+          exit(EXIT_FAILURE);
+        }
 
-    pi->set_img_transition_efx(EFX::CROSSFADE);
-    pi->efx->configure("fade_time_ms",  &TRANSITION_TIME_MS);
+        // Create a windowed mode window and its OpenGL context
+        window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "glfwPI", NULL, NULL);
 
-    pi->efx->image_mode = MODE::SCALE;
+        if (!window) {
+          glfwTerminate();
+          exit(EXIT_FAILURE);
+        }
 
-    pi->window_width = WINDOW_WIDTH;
-    pi->window_height = WINDOW_HEIGHT;
-    pi->img_pick_random = true;
-    pi->img_update_interval = IMG_UPDATE_INTERVAL;
-    pi->spectrum_animation_speed = 0.008f;
-    pi->spectrum_position_vertical = 0.0f;
-    pi->spectrum_enabled = true;
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
-    // Get some sexy pink going :)
-    // That's "E91E63" in hex for anyone wondering ;)
-    for (int i = 0; i < SPECTRUM_BAR_COUNT; i++) {
-        pi->set_bar_color(i, 0.914, 0.118, 0.388);
-    }
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(2);
 
-    // Load images from the directory passed as argument
-    pi->load_images(image_dir_path);
+        glfwSetKeyCallback(window, keyboard);
 
 
-    // Make the window's context current
-    glfwMakeContextCurrent(window);
+        // Create PictureIt and set some intial properties
+        pi = new PictureIt(SPECTRUM_BAR_COUNT);
+
+        pi->set_img_transition_efx(EFX::CROSSFADE);
+        pi->efx->configure("fade_time_ms", &TRANSITION_TIME_MS);
+
+        pi->efx->image_mode = MODE::SCALE;
+
+        pi->window_width = WINDOW_WIDTH;
+        pi->window_height = WINDOW_HEIGHT;
+        pi->img_pick_random = true;
+        pi->img_update_interval = IMG_UPDATE_INTERVAL;
+        pi->spectrum_animation_speed = 0.008f;
+        pi->spectrum_position_vertical = 0.0f;
+        pi->spectrum_enabled = true;
+
+        // Get some sexy pink going :)
+        // That's "E91E63" in hex for anyone wondering ;)
+        for (int i = 0; i < SPECTRUM_BAR_COUNT; i++) {
+          pi->set_bar_color(i, 0.914, 0.118, 0.388);
+        }
+
+        // Load images from the directory passed as argument
+        pi->load_images(image_dir_path);
 
 
-    //// Create an AudioPlayer so we have something
-    //// to feed the spectrum with
-    //player = new AudioPlayer(audio_data);
-    //if (audio_file_path != nullptr && player->load(audio_file_path)) {
-    //    player->play();
-    //}
+        // Make the window's context current
+        glfwMakeContextCurrent(window);
 
 
-    // Mainloop which renders PictureIt
-    while (!glfwWindowShouldClose(window)) {
-        if (quit) {
+        // Create an AudioPlayer so we have something
+        // to feed the spectrum with
+        player = new AudioPlayer(pi, audio_file_path);
+
+
+        // Mainloop which renders PictureIt
+        while (!glfwWindowShouldClose(window)) {
+          if (quit) {
             break;
+          }
+
+          // Render PictureIt frame
+          pi->render();
+
+          // Swap front and back buffers
+          glfwSwapBuffers(window);
+
+          // Poll for and process events
+          glfwPollEvents();
         }
 
-        // Render PictureIt frame
-        pi->render();
+        // Cleanup
+        delete player;
+        player = nullptr;
 
-        // Swap front and back buffers
-        glfwSwapBuffers(window);
+        //delete player;
+        delete pi;
+        pi = nullptr;
 
-        // Poll for and process events
-        glfwPollEvents();
+        glfwDestroyWindow(window);
+        glfwTerminate();
+
+        exit(EXIT_SUCCESS);
+    }
+    catch (std::exception &e)
+    {
+      cout << "catched exception: " << e.what() << endl;
+    }
+    catch (...)
+    {
+      cout << "catched unhandled exception" << endl;
     }
 
-    // Cleanup
-    //player->exit();
-
-    //delete player;
-    delete pi;
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
-    exit(EXIT_SUCCESS);
+    exit(EXIT_FAILURE);
 }
