@@ -19,6 +19,7 @@ endif()
 set(ASPLIB_MODULES_TO_BUILD SpectrumVisProcessor AudioInterfaces)
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends/PictureIt/add_PictureIt.cmake")
 list(APPEND DEPLIBS PictureIt::PictureIt)
+list(APPEND DEPLIBS asplib::AudioInterfaces)
 
 # Include GLFW
 include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends/GLFW/add_GLFW.cmake")
@@ -50,8 +51,9 @@ list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY})
 #list(APPEND DEPLIBS ${PULSEAUDIO_LIBRARY})
 
 
-set(SOURCES src/main.cpp)
-            #src/audio_player.cpp)
+set(SOURCES src/main.cpp
+            src/audio_player.cpp
+            src/audio_player.hpp)
 
 
 add_executable(${PROJECT_NAME} ${SOURCES})
