@@ -2,9 +2,12 @@
 
 #include <math.h>
 
-AudioPlayer::AudioPlayer(PictureIt *PI, std::string Filename) {
+using namespace asplib;
 
-    this->pi = PI;
+
+AudioPlayer::AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices) {
+
+    this->get_AvailableDevices(Devices);
 }
 
 
@@ -18,8 +21,8 @@ int AudioPlayer::AudioCallback(const void *inputBuffer, void *outputBuffer,
                                unsigned long framesPerBuffer,
                                const PaStreamCallbackTimeInfo* timeInfo,
                                PaStreamCallbackFlags statusFlags,
-                               void *userData)
-{
-  return 0;
+                               void *userData) {
+  
+    return 0;
 }
 

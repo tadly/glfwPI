@@ -10,12 +10,12 @@
 #include <asplib/AudioInterfaces/PortAudio/asplib_IPortAudio.h>
 
 
-class AudioPlayer : asplib::CPortAudioHandle {
+class AudioPlayer : asplib::IPortAudio {
     private:
         PictureIt *pi;
 
     public:
-        AudioPlayer(PictureIt *PI, std::string Filename);
+        AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices);
         ~AudioPlayer();
 
         virtual int AudioCallback(const void *inputBuffer, void *outputBuffer,
