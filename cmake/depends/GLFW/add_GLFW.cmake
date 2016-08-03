@@ -1,5 +1,5 @@
-set(GLFW_SRC_DIR ${CMAKE_BINARY_DIR}/3rdParty/GLFW-src)
-set(GLFW_BUILD_DIR ${CMAKE_BINARY_DIR}/3rdParty/GLFW-build)
+set(GLFW_SRC_DIR ${CMAKE_BINARY_DIR}/depends/GLFW)
+set(GLFW_BUILD_DIR ${CMAKE_BINARY_DIR}/depends/0build/GLFW)
 
 # Download and unpack GLFW at configure time
 configure_file(${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt.in

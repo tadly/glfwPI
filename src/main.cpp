@@ -9,6 +9,8 @@
 
 #include "audio_player.hpp"
 
+using namespace std;
+
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -22,6 +24,7 @@ int slide_direction = 1;
 
 const char *image_dir_path = nullptr;
 const char *audio_file_path = nullptr;
+const char *audio_output_device = nullptr;
 
 GLFWwindow *window = nullptr;
 PictureIt *pi = nullptr;
@@ -35,9 +38,9 @@ int current_windowed_pos_y = 0;
 bool fullscreen = false;
 bool quit = false;
 
-static void signal_handler(int sig, siginfo_t *si, void *unused) {
-    quit = true;
-}
+//static void signal_handler(int sig, siginfo_t *si, void *unused) {
+//    quit = true;
+//}
 
 static void keyboard(GLFWwindow* window, int key, int scancode, int action, int mods) {
     if (action != GLFW_PRESS && action != GLFW_REPEAT)
@@ -169,29 +172,24 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) {
 }
 
 
-void audio_data(float *data, int data_length) {
-    pi->audio_data(data, data_length);
-}
-
-
-bool add_signal_handler() {
-    struct sigaction sa;
-
-    sigemptyset(&sa.sa_mask);
-    sa.sa_sigaction = signal_handler;
-
-    if (sigaction(SIGINT, &sa, NULL) == -1) {
-        printf("Can't set SIGINT handler!\n");
-        return false;
-    }
-
-    if (sigaction(SIGHUP, &sa, NULL) == -1) {
-        printf("Can't set SIGHUP handler!\n");
-        return false;
-    }
-
-    return true;
-}
+//bool add_signal_handler() {
+//    struct sigaction sa;
+//
+//    sigemptyset(&sa.sa_mask);
+//    sa.sa_sigaction = signal_handler;
+//
+//    if (sigaction(SIGINT, &sa, NULL) == -1) {
+//        printf("Can't set SIGINT handler!\n");
+//        return false;
+//    }
+//
+//    if (sigaction(SIGHUP, &sa, NULL) == -1) {
+//        printf("Can't set SIGHUP handler!\n");
+//        return false;
+//    }
+//
+//    return true;
+//}
 
 void show_help() {
     std::cout << "Available keyboard shortcuts:" << std::endl;
@@ -221,122 +219,159 @@ void show_help() {
     std::cout << "      0: Image mode \"Zoom\"" << std::endl;
 }
 
+void show_portaudio_devices(asplib::CPaDeviceInfoVector_t &devices)
+{
+  cout << "Available PortAudio devices:" << endl;
+  for (int i = 0; i < devices.size(); i++)
+  {
+    if (devices[i].deviceInfo->maxOutputChannels > 0)
+    {
+      cout << "[" << devices[i].paDeviceIdx << "] " << devices[i].deviceName << ": " << devices[i].hostAPI << endl;
+    }
+  }
+  cout << endl << endl;
+}
+
 
 int main(int argc, char **argv) {
-    // Signal handling
-    if(!add_signal_handler()) {
-        exit(EXIT_FAILURE);
-    }
-
-    // Print CLI usage if not enough sys args
-    if (argc < 2) {
-        printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file]\n", argv[0]);
-        exit(EXIT_FAILURE);
-    }
-
-    // Some simple argparsing
-    // Not super failsafe but'll do :)
-    for (int i = 1; i < argc; i++) {
-        if(strncmp(argv[i], "-b", 2) == 0) {
-            SPECTRUM_BAR_COUNT = atoi(argv[i+1]);
-            i++;
-
-        } else if(strncmp(argv[i], "-a", 2) == 0) {
-            audio_file_path = argv[i+1];
-            i++;
-
-        } else {
-            image_dir_path = argv[i];
+    //// Signal handling
+    //if(!add_signal_handler()) {
+    //    exit(EXIT_FAILURE);
+    //}
+    try
+    {
+        // Print CLI usage if not enough sys args
+        if (argc < 3) {
+          printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file] [-d image-path]\n", argv[0]);
+          exit(EXIT_FAILURE);
         }
-    }
 
-    // Print keyboard shortcuts
-    show_help();
+        // Some simple argparsing
+        // Not super failsafe but'll do :)
+        for (int i = 1; i < argc; i++) {
+          if (strncmp(argv[i], "-b", 2) == 0) {
+            SPECTRUM_BAR_COUNT = atoi(argv[i + 1]);
+            i++;
 
+          }
+          else if (strncmp(argv[i], "-a", 2) == 0) {
+            audio_file_path = argv[i + 1];
+            i++;
 
-    // Initialize glfw
-    if (!glfwInit()) {
-        exit(EXIT_FAILURE);
-    }
+          }
+          else if (strncmp(argv[i], "-d", 2) == 0) {
+            image_dir_path = argv[i + 1];
+            i++;
+          }
+          else if (strncmp(argv[i], "-p", 2) == 0) {
+            audio_output_device = argv[i + 1];
+            i++;
+          }
+        }
+        
+        // Create an AudioPlayer so we have something
+        // to feed the spectrum with
+        asplib::CPortAudioHandle portAudioHandle; // initialize PortAudio
+        asplib::CPaDeviceInfoVector_t devices;
+        player = new AudioPlayer(devices);
+        show_portaudio_devices(devices);
+        if (!audio_output_device)
+        {
+          cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
+          return -1;
+        }
 
-    // Create a windowed mode window and its OpenGL context
-    window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "glfwPI", NULL, NULL);
+        // Print keyboard shortcuts
+        show_help();
 
-    if (!window) {
-        glfwTerminate();
-        exit(EXIT_FAILURE);
-    }
+        // Initialize glfw
+        if (!glfwInit()) {
+          exit(EXIT_FAILURE);
+        }
 
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+        // Create a windowed mode window and its OpenGL context
+        window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "glfwPI", NULL, NULL);
 
-    glfwMakeContextCurrent(window);
-    glfwSwapInterval(2);
+        if (!window) {
+          glfwTerminate();
+          exit(EXIT_FAILURE);
+        }
 
-    glfwSetKeyCallback(window, keyboard);
+        glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
+        glfwMakeContextCurrent(window);
+        glfwSwapInterval(2);
 
-    // Create PictureIt and set some intial properties
-    pi = new PictureIt(SPECTRUM_BAR_COUNT);
-
-    pi->set_img_transition_efx(EFX::CROSSFADE);
-    pi->efx->configure("fade_time_ms",  &TRANSITION_TIME_MS);
-
-    pi->efx->image_mode = MODE::SCALE;
-
-    pi->window_width = WINDOW_WIDTH;
-    pi->window_height = WINDOW_HEIGHT;
-    pi->img_pick_random = true;
-    pi->img_update_interval = IMG_UPDATE_INTERVAL;
-    pi->spectrum_animation_speed = 0.008f;
-    pi->spectrum_position_vertical = 0.0f;
-    pi->spectrum_enabled = true;
-
-    // Get some sexy pink going :)
-    // That's "E91E63" in hex for anyone wondering ;)
-    for (int i = 0; i < SPECTRUM_BAR_COUNT; i++) {
-        pi->set_bar_color(i, 0.914, 0.118, 0.388);
-    }
-
-    // Load images from the directory passed as argument
-    pi->load_images(image_dir_path);
-
-
-    // Make the window's context current
-    glfwMakeContextCurrent(window);
-
-
-    // Create an AudioPlayer so we have something
-    // to feed the spectrum with
-    player = new AudioPlayer(audio_data);
-    if (audio_file_path != nullptr && player->load(audio_file_path)) {
-        player->play();
-    }
+        glfwSetKeyCallback(window, keyboard);
 
 
-    // Mainloop which renders PictureIt
-    while (!glfwWindowShouldClose(window)) {
-        if (quit) {
+        // Create PictureIt and set some intial properties
+        pi = new PictureIt(SPECTRUM_BAR_COUNT);
+
+        pi->set_img_transition_efx(EFX::CROSSFADE);
+        pi->efx->configure("fade_time_ms", &TRANSITION_TIME_MS);
+
+        pi->efx->image_mode = MODE::SCALE;
+
+        pi->window_width = WINDOW_WIDTH;
+        pi->window_height = WINDOW_HEIGHT;
+        pi->img_pick_random = true;
+        pi->img_update_interval = IMG_UPDATE_INTERVAL;
+        pi->spectrum_animation_speed = 0.008f;
+        pi->spectrum_position_vertical = 0.0f;
+        pi->spectrum_enabled = true;
+
+        // Get some sexy pink going :)
+        // That's "E91E63" in hex for anyone wondering ;)
+        for (int i = 0; i < SPECTRUM_BAR_COUNT; i++) {
+          pi->set_bar_color(i, 0.914, 0.118, 0.388);
+        }
+
+        // Load images from the directory passed as argument
+        pi->load_images(image_dir_path);
+
+
+        // Make the window's context current
+        glfwMakeContextCurrent(window);
+
+
+        // Mainloop which renders PictureIt
+        while (!glfwWindowShouldClose(window)) {
+          if (quit) {
             break;
+          }
+
+          // Render PictureIt frame
+          pi->render();
+
+          // Swap front and back buffers
+          glfwSwapBuffers(window);
+
+          // Poll for and process events
+          glfwPollEvents();
         }
 
-        // Render PictureIt frame
-        pi->render();
+        // Cleanup
+        delete player;
+        player = nullptr;
 
-        // Swap front and back buffers
-        glfwSwapBuffers(window);
+        //delete player;
+        delete pi;
+        pi = nullptr;
 
-        // Poll for and process events
-        glfwPollEvents();
+        glfwDestroyWindow(window);
+        glfwTerminate();
+
+        exit(EXIT_SUCCESS);
+    }
+    catch (std::exception &e)
+    {
+      cout << "catched exception: " << e.what() << endl;
+    }
+    catch (...)
+    {
+      cout << "catched unhandled exception" << endl;
     }
 
-    // Cleanup
-    player->exit();
-
-    delete player;
-    delete pi;
-
-    glfwDestroyWindow(window);
-    glfwTerminate();
-
-    exit(EXIT_SUCCESS);
+    exit(EXIT_FAILURE);
 }

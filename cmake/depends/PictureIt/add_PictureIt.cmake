@@ -1,5 +1,5 @@
-set(PICTUREIT_SRC_DIR ${CMAKE_BINARY_DIR}/3rdParty/PictureIt-src)
-set(PICTUREIT_BUILD_DIR ${CMAKE_BINARY_DIR}/3rdParty/PictureIt-build)
+set(PICTUREIT_SRC_DIR ${CMAKE_BINARY_DIR}/depends/PictureIt)
+set(PICTUREIT_BUILD_DIR ${CMAKE_BINARY_DIR}/depends/0build/PictureIt)
 
 # Download and unpack PictureIt at configure time
 configure_file(${CMAKE_CURRENT_LIST_DIR}/CMakeLists.txt.in
