@@ -9,6 +9,8 @@
 
 #include "audio_player.hpp"
 
+using namespace std;
+
 
 #define WINDOW_WIDTH 1280
 #define WINDOW_HEIGHT 720
@@ -22,6 +24,7 @@ int slide_direction = 1;
 
 const char *image_dir_path = nullptr;
 const char *audio_file_path = nullptr;
+const char *audio_output_device = nullptr;
 
 GLFWwindow *window = nullptr;
 PictureIt *pi = nullptr;
@@ -216,6 +219,19 @@ void show_help() {
     std::cout << "      0: Image mode \"Zoom\"" << std::endl;
 }
 
+void show_portaudio_devices(asplib::CPaDeviceInfoVector_t &devices)
+{
+  cout << "Available PortAudio devices:" << endl;
+  for (int i = 0; i < devices.size(); i++)
+  {
+    if (devices[i].deviceInfo->maxOutputChannels > 0)
+    {
+      cout << "[" << devices[i].paDeviceIdx << "] " << devices[i].deviceName << ": " << devices[i].hostAPI << endl;
+    }
+  }
+  cout << endl << endl;
+}
+
 
 int main(int argc, char **argv) {
     //// Signal handling
@@ -247,11 +263,26 @@ int main(int argc, char **argv) {
             image_dir_path = argv[i + 1];
             i++;
           }
+          else if (strncmp(argv[i], "-p", 2) == 0) {
+            audio_output_device = argv[i + 1];
+            i++;
+          }
+        }
+        
+        // Create an AudioPlayer so we have something
+        // to feed the spectrum with
+        asplib::CPortAudioHandle portAudioHandle; // initialize PortAudio
+        asplib::CPaDeviceInfoVector_t devices;
+        player = new AudioPlayer(devices);
+        show_portaudio_devices(devices);
+        if (!audio_output_device)
+        {
+          cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
+          return -1;
         }
 
         // Print keyboard shortcuts
         show_help();
-
 
         // Initialize glfw
         if (!glfwInit()) {
@@ -302,11 +333,6 @@ int main(int argc, char **argv) {
 
         // Make the window's context current
         glfwMakeContextCurrent(window);
-
-
-        // Create an AudioPlayer so we have something
-        // to feed the spectrum with
-        player = new AudioPlayer(pi, audio_file_path);
 
 
         // Mainloop which renders PictureIt
