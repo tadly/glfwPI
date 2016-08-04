@@ -12,7 +12,7 @@ ExternalProject_Add(
 
     # Otherwise download from github
     GIT_REPOSITORY    "https://github.com/linuxwhatelse/PictureIt.git"
-    GIT_TAG           "cmake"
+    GIT_TAG           "master"
 
     SOURCE_DIR        "${PICTUREIT_SRC_DIR}"
     BINARY_DIR        "${PICTUREIT_BUILD_DIR}"
