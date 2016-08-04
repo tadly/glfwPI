@@ -24,7 +24,7 @@ int slide_direction = 1;
 
 const char *image_dir_path = nullptr;
 const char *audio_file_path = nullptr;
-const char *audio_output_device = nullptr;
+int audio_output_device = -1;
 
 GLFWwindow *window = nullptr;
 PictureIt *pi = nullptr;
@@ -264,7 +264,7 @@ int main(int argc, char **argv) {
             i++;
           }
           else if (strncmp(argv[i], "-p", 2) == 0) {
-            audio_output_device = argv[i + 1];
+            audio_output_device = atoi(argv[i + 1]);
             i++;
           }
         }
@@ -275,11 +275,23 @@ int main(int argc, char **argv) {
         asplib::CPaDeviceInfoVector_t devices;
         player = new AudioPlayer(devices);
         show_portaudio_devices(devices);
-        if (!audio_output_device)
-        {
+        if (audio_output_device < 0) {
+          delete player;
+          player = nullptr;
           cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
-          return -1;
+          exit(EXIT_FAILURE);
         }
+        if (!audio_file_path) {
+          delete player;
+          player = nullptr;
+          cout << "No valid audio file path! Please select an audio file with \"-a\" <file path>." << endl;
+          exit(EXIT_FAILURE);
+        }
+        if (!player->Create(audio_output_device, audio_file_path))
+        {
+          cout << "Failed to create audio player!" << endl;
+        }
+
 
         // Print keyboard shortcuts
         show_help();
