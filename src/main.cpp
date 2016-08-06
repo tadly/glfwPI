@@ -277,31 +277,6 @@ int main(int argc, char **argv) {
           }
         }
         
-        // Create an AudioPlayer so we have something
-        // to feed the spectrum with
-        asplib::CPortAudioHandle portAudioHandle; // initialize PortAudio
-        asplib::CPaDeviceInfoVector_t devices;
-        player = new AudioPlayer(devices);
-        show_portaudio_devices(devices);
-        if (audio_output_device < 0) {
-            cleanup();
-            cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
-            exit(EXIT_FAILURE);
-        }
-        if (!audio_file_path) {
-            cleanup();
-            cout << "No valid audio file path! Please select an audio file with \"-a\" <file path>." << endl;
-            exit(EXIT_FAILURE);
-        }
-        if (!player->Create(audio_output_device, audio_file_path))
-        {
-            cout << "Failed to create audio player!" << endl;
-        }
-
-
-        // Print keyboard shortcuts
-        show_help();
-
         // Initialize glfw
         if (!glfwInit()) {
             cleanup();
@@ -324,10 +299,33 @@ int main(int argc, char **argv) {
 
         glfwSetKeyCallback(window, keyboard);
 
-
         // Create PictureIt and set some intial properties
         pi = new PictureIt(SPECTRUM_BAR_COUNT);
 
+        // Create an AudioPlayer so we have something
+        // to feed the spectrum with
+        asplib::CPortAudioHandle portAudioHandle; // initialize PortAudio
+        asplib::CPaDeviceInfoVector_t devices;
+        player = new AudioPlayer(devices, pi);
+        show_portaudio_devices(devices);
+        if (audio_output_device < 0) {
+            cleanup();
+            cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
+            exit(EXIT_FAILURE);
+        }
+        if (!audio_file_path) {
+            cleanup();
+            cout << "No valid audio file path! Please select an audio file with \"-a\" <file path>." << endl;
+            exit(EXIT_FAILURE);
+        }
+        if (!player->Create(audio_output_device, audio_file_path))
+        {
+            cout << "Failed to create audio player!" << endl;
+        }
+
+        // Print keyboard shortcuts
+        show_help();
+        
         pi->set_img_transition_efx(EFX::CROSSFADE);
         pi->efx->configure("fade_time_ms", &TRANSITION_TIME_MS);
 
@@ -350,6 +348,10 @@ int main(int argc, char **argv) {
         // Load images from the directory passed as argument
         pi->load_images(image_dir_path);
 
+        if (!player->Start()) {
+          cleanup();
+          exit(EXIT_FAILURE);
+        }
 
         // Make the window's context current
         glfwMakeContextCurrent(window);
@@ -382,5 +384,6 @@ int main(int argc, char **argv) {
         cout << "catched unhandled exception" << endl;
     }
 
+    cleanup();
     exit(EXIT_FAILURE);
 }

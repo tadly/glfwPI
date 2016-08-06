@@ -17,11 +17,11 @@ class AudioPlayer : asplib::IPortAudio {
         asplib::FrameBuffer_NativeFloat *audioBuffer;
 
     public:
-        AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices);
+        AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices, PictureIt *pi);
         ~AudioPlayer();
 
         bool Create(int AudioDeviceIndex, std::string AudioFilePath);
-        bool Start(PictureIt *pi);
+        bool Start();
 
         virtual int AudioCallback(const void *inputBuffer, void *outputBuffer,
                                   unsigned long framesPerBuffer,

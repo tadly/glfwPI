@@ -9,7 +9,13 @@ using namespace asplib;
 void show_audio_file_info(SndfileHandle &WavFile, string FileName);
 
 
-AudioPlayer::AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices) {
+AudioPlayer::AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices, PictureIt *pi) {
+    this->pi = nullptr;
+    if (!pi) {
+        throw exception("FATAL ERROR! Invalid PictureIt object pointer!");
+    }
+    this->pi = pi;
+  
     audioBuffer = nullptr;
     this->get_AvailableDevices(Devices);
 }
@@ -44,7 +50,7 @@ bool AudioPlayer::Create(int AudioDeviceIndex, std::string AudioFilePath) {
         return false;
     }
 
-    PaError paErr = this->configure_Device(0, wavFile.channels(), wavFile.samplerate(), -1, AudioDeviceIndex, paFloat32);
+    PaError paErr = this->configure_Device(0, wavFile.channels(), wavFile.samplerate(), pi->fft_frame_size, AudioDeviceIndex, paFloat32);
     if (paErr != paNoError) {
         cout << "FATAL ERROR! Failed to configure portaudio device \"" << this->get_PortAudioErrStr(paErr) << "\"" << endl;
         return false;
@@ -54,13 +60,7 @@ bool AudioPlayer::Create(int AudioDeviceIndex, std::string AudioFilePath) {
     return true;
 }
 
-bool AudioPlayer::Start(PictureIt *pi) {
-  if (!pi) {
-    cout << "FATAL ERROR! Invalid PictureIt object pointer!" << endl;
-    return false;
-  }
-  this->pi = pi;
-
+bool AudioPlayer::Start() {
   PaError err = this->start_Device();
   if (err != paNoError) {
     cout << "Failed to start audio player with portaudio error \"" << this->get_PortAudioErrStr(err) << "\"" << endl;
