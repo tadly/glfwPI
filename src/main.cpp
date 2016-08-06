@@ -230,6 +230,15 @@ void show_portaudio_devices(asplib::CPaDeviceInfoVector_t &devices)
     }
   }
   cout << endl << endl;
+
+
+void cleanup()
+{
+    delete player;
+    player = nullptr;
+
+    delete pi;
+    pi = nullptr;
 }
 
 
@@ -276,16 +285,14 @@ int main(int argc, char **argv) {
         player = new AudioPlayer(devices);
         show_portaudio_devices(devices);
         if (audio_output_device < 0) {
-          delete player;
-          player = nullptr;
           cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
           exit(EXIT_FAILURE);
+            cleanup();
         }
         if (!audio_file_path) {
-          delete player;
-          player = nullptr;
           cout << "No valid audio file path! Please select an audio file with \"-a\" <file path>." << endl;
           exit(EXIT_FAILURE);
+            cleanup();
         }
         if (!player->Create(audio_output_device, audio_file_path))
         {
@@ -298,15 +305,17 @@ int main(int argc, char **argv) {
 
         // Initialize glfw
         if (!glfwInit()) {
-          exit(EXIT_FAILURE);
+            cleanup();
+            exit(EXIT_FAILURE);
         }
 
         // Create a windowed mode window and its OpenGL context
         window = glfwCreateWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "glfwPI", NULL, NULL);
 
         if (!window) {
-          glfwTerminate();
-          exit(EXIT_FAILURE);
+            cleanup();
+            glfwTerminate();
+            exit(EXIT_FAILURE);
         }
 
         glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
@@ -362,14 +371,7 @@ int main(int argc, char **argv) {
           // Poll for and process events
           glfwPollEvents();
         }
-
-        // Cleanup
-        delete player;
-        player = nullptr;
-
-        //delete player;
-        delete pi;
-        pi = nullptr;
+        cleanup();
 
         glfwDestroyWindow(window);
         glfwTerminate();
