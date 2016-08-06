@@ -15,6 +15,7 @@ class AudioPlayer : asplib::IPortAudio {
     private:
         PictureIt *pi;
         asplib::FrameBuffer_NativeFloat *audioBuffer;
+        unsigned int maxOutChannels;
 
     public:
         AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices, PictureIt *pi);

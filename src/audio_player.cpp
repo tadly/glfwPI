@@ -43,14 +43,20 @@ bool AudioPlayer::Create(int AudioDeviceIndex, std::string AudioFilePath) {
     show_audio_file_info(wavFile, AudioFilePath);
 
     audioBuffer = new asplib::FrameBuffer_NativeFloat(wavFile.frames()*wavFile.channels(), 1);
-    sf_count_t maxSamples = wavFile.read(audioBuffer->get_Frame(0), wavFile.frames());
+    sf_count_t maxSamples = 0;
+    if (wavFile.channels() > 1)
+      maxSamples = wavFile.readf(audioBuffer->get_Frame(0), wavFile.frames());
+    else
+      maxSamples = wavFile.read(audioBuffer->get_Frame(0), wavFile.frames());
+
     if (maxSamples != wavFile.frames())
     {
         cout << "Couldn't read entire audio file" << endl;
         return false;
     }
+    this->maxOutChannels = wavFile.channels();
 
-    PaError paErr = this->configure_Device(0, wavFile.channels(), wavFile.samplerate(), pi->fft_frame_size, AudioDeviceIndex, paFloat32);
+    PaError paErr = this->configure_Device(0, this->maxOutChannels, wavFile.samplerate(), pi->fft_frame_size, AudioDeviceIndex, paFloat32);
     if (paErr != paNoError) {
         cout << "FATAL ERROR! Failed to configure portaudio device \"" << this->get_PortAudioErrStr(paErr) << "\"" << endl;
         return false;
@@ -76,8 +82,20 @@ int AudioPlayer::AudioCallback(const void *inputBuffer, void *outputBuffer,
                                const PaStreamCallbackTimeInfo* timeInfo,
                                PaStreamCallbackFlags statusFlags,
                                void *userData) {
-  
-    return 0;
+
+  static unsigned long long count = 0;
+
+  if (count*framesPerBuffer*maxOutChannels < audioBuffer->get_MaxFrameLength() - framesPerBuffer*maxOutChannels)
+  {
+    memcpy(outputBuffer, (void*)((float*)audioBuffer->get_Frame(0) + count*framesPerBuffer*maxOutChannels), sizeof(float)*framesPerBuffer*maxOutChannels);
+    count++;
+  }
+  else
+  {
+    memset(outputBuffer, 0, sizeof(float)*framesPerBuffer*maxOutChannels);
+  }
+
+  return paContinue;
 }
 
 
