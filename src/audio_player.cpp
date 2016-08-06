@@ -15,10 +15,6 @@ AudioPlayer::AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices) {
 }
 
 
-
-    delete pi;
-    pi = nullptr;
-    
 AudioPlayer::~AudioPlayer() {  
     delete audioBuffer;
     audioBuffer = nullptr;
