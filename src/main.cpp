@@ -221,15 +221,16 @@ void show_help() {
 
 void show_portaudio_devices(asplib::CPaDeviceInfoVector_t &devices)
 {
-  cout << "Available PortAudio devices:" << endl;
-  for (int i = 0; i < devices.size(); i++)
-  {
-    if (devices[i].deviceInfo->maxOutputChannels > 0)
+    cout << "Available PortAudio devices:" << endl;
+    for (int i = 0; i < devices.size(); i++)
     {
-      cout << "[" << devices[i].paDeviceIdx << "] " << devices[i].deviceName << ": " << devices[i].hostAPI << endl;
+        if (devices[i].deviceInfo->maxOutputChannels > 0)
+        {
+            cout << "[" << devices[i].paDeviceIdx << "] " << devices[i].deviceName << ": " << devices[i].hostAPI << endl;
+        }
     }
-  }
-  cout << endl << endl;
+    cout << endl << endl;
+}
 
 
 void cleanup()
@@ -251,30 +252,28 @@ int main(int argc, char **argv) {
     {
         // Print CLI usage if not enough sys args
         if (argc < 3) {
-          printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file] [-d image-path]\n", argv[0]);
-          exit(EXIT_FAILURE);
+            printf("usage: %s img-directory [-b spectrum-bar-count] [-a audio-file] [-d image-path]\n", argv[0]);
+            exit(EXIT_FAILURE);
         }
 
         // Some simple argparsing
         // Not super failsafe but'll do :)
         for (int i = 1; i < argc; i++) {
           if (strncmp(argv[i], "-b", 2) == 0) {
-            SPECTRUM_BAR_COUNT = atoi(argv[i + 1]);
-            i++;
-
+              SPECTRUM_BAR_COUNT = atoi(argv[i + 1]);
+              i++;
           }
           else if (strncmp(argv[i], "-a", 2) == 0) {
-            audio_file_path = argv[i + 1];
-            i++;
-
+              audio_file_path = argv[i + 1];
+              i++;
           }
           else if (strncmp(argv[i], "-d", 2) == 0) {
-            image_dir_path = argv[i + 1];
-            i++;
+              image_dir_path = argv[i + 1];
+              i++;
           }
           else if (strncmp(argv[i], "-p", 2) == 0) {
-            audio_output_device = atoi(argv[i + 1]);
-            i++;
+              audio_output_device = atoi(argv[i + 1]);
+              i++;
           }
         }
         
@@ -285,18 +284,18 @@ int main(int argc, char **argv) {
         player = new AudioPlayer(devices);
         show_portaudio_devices(devices);
         if (audio_output_device < 0) {
-          cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
-          exit(EXIT_FAILURE);
             cleanup();
+            cout << "Please select an audio output device with \"-p\" and a corresponding index." << endl;
+            exit(EXIT_FAILURE);
         }
         if (!audio_file_path) {
-          cout << "No valid audio file path! Please select an audio file with \"-a\" <file path>." << endl;
-          exit(EXIT_FAILURE);
             cleanup();
+            cout << "No valid audio file path! Please select an audio file with \"-a\" <file path>." << endl;
+            exit(EXIT_FAILURE);
         }
         if (!player->Create(audio_output_device, audio_file_path))
         {
-          cout << "Failed to create audio player!" << endl;
+            cout << "Failed to create audio player!" << endl;
         }
 
 
@@ -345,7 +344,7 @@ int main(int argc, char **argv) {
         // Get some sexy pink going :)
         // That's "E91E63" in hex for anyone wondering ;)
         for (int i = 0; i < SPECTRUM_BAR_COUNT; i++) {
-          pi->set_bar_color(i, 0.914, 0.118, 0.388);
+            pi->set_bar_color(i, 0.914, 0.118, 0.388);
         }
 
         // Load images from the directory passed as argument
@@ -362,14 +361,15 @@ int main(int argc, char **argv) {
             break;
           }
 
-          // Render PictureIt frame
-          pi->render();
+        while (!glfwWindowShouldClose(window) && !quit) {
+            // Render PictureIt frame
+            pi->render();
 
-          // Swap front and back buffers
-          glfwSwapBuffers(window);
+            // Swap front and back buffers
+            glfwSwapBuffers(window);
 
-          // Poll for and process events
-          glfwPollEvents();
+            // Poll for and process events
+            glfwPollEvents();
         }
         cleanup();
 
@@ -380,11 +380,11 @@ int main(int argc, char **argv) {
     }
     catch (std::exception &e)
     {
-      cout << "catched exception: " << e.what() << endl;
+        cout << "catched exception: " << e.what() << endl;
     }
     catch (...)
     {
-      cout << "catched unhandled exception" << endl;
+        cout << "catched unhandled exception" << endl;
     }
 
     exit(EXIT_FAILURE);
