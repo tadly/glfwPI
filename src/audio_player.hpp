@@ -21,6 +21,7 @@ class AudioPlayer : asplib::IPortAudio {
         ~AudioPlayer();
 
         bool Create(int AudioDeviceIndex, std::string AudioFilePath);
+        bool Start(PictureIt *pi);
 
         virtual int AudioCallback(const void *inputBuffer, void *outputBuffer,
                                   unsigned long framesPerBuffer,
