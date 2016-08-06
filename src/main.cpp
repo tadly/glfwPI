@@ -356,11 +356,6 @@ int main(int argc, char **argv) {
 
 
         // Mainloop which renders PictureIt
-        while (!glfwWindowShouldClose(window)) {
-          if (quit) {
-            break;
-          }
-
         while (!glfwWindowShouldClose(window) && !quit) {
             // Render PictureIt frame
             pi->render();
