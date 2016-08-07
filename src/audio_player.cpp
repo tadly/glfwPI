@@ -17,6 +17,7 @@ AudioPlayer::AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices, PictureIt *pi) 
     this->pi = pi;
   
     audioBuffer = nullptr;
+    silencAudioBuffer = nullptr;
     this->get_AvailableDevices(Devices);
 }
 
@@ -24,6 +25,9 @@ AudioPlayer::AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices, PictureIt *pi) 
 AudioPlayer::~AudioPlayer() {  
     delete audioBuffer;
     audioBuffer = nullptr;
+
+    delete silencAudioBuffer;
+    silencAudioBuffer = nullptr;
 
     this->stop_Device();
 }
@@ -94,6 +98,11 @@ int AudioPlayer::AudioCallback(const void *inputBuffer, void *outputBuffer,
   {
     memset(outputBuffer, 0, sizeof(float)*framesPerBuffer*maxOutChannels);
   }
+    else
+    {
+        memset(outputBuffer, 0, sizeof(float)*framesPerBuffer*maxOutChannels);
+        pi->audio_data(silencAudioBuffer->get_Frame(0), framesPerBuffer);
+    }
 
   return paContinue;
 }
