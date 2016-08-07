@@ -12,7 +12,7 @@ void show_audio_file_info(SndfileHandle &WavFile, string FileName);
 AudioPlayer::AudioPlayer(asplib::CPaDeviceInfoVector_t &Devices, PictureIt *pi) {
     this->pi = nullptr;
     if (!pi) {
-        throw exception("FATAL ERROR! Invalid PictureIt object pointer!");
+		throw runtime_error("FATAL ERROR! Invalid PictureIt object pointer!");
     }
     this->pi = pi;
   
