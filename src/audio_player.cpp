@@ -66,6 +66,7 @@ bool AudioPlayer::Create(int AudioDeviceIndex, std::string AudioFilePath) {
         return false;
     }
     paErr = this->create_Device();
+    silencAudioBuffer = new asplib::FrameBuffer_NativeFloat(pi->fft_frame_size*this->maxOutChannels, 1);
 
     return true;
 }
