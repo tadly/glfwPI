@@ -7,12 +7,10 @@ include(ExternalProject)
 ExternalProject_Add(
     PictureIt
 
-    # Use -DPICTUREIT_LOCAL_SRC_DIR=<path>
-    URL               "${PICTUREIT_LOCAL_SRC_DIR}"
-
-    # Otherwise download from github
     GIT_REPOSITORY    "https://github.com/linuxwhatelse/PictureIt.git"
-    GIT_TAG           "master"
+    GIT_TAG           "refactor"
+
+    GIT_SHALLOW       1
 
     SOURCE_DIR        "${PICTUREIT_SRC_DIR}"
     BINARY_DIR        "${PICTUREIT_BUILD_DIR}"

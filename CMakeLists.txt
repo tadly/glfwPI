@@ -1,5 +1,10 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.1)
 project(glfwPI CXX)
+set(CMAKE_BUILD_TYPE Debug)
+
+if(UNIX)
+    add_definitions(-DTARGET_LINUX)
+endif()
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 
@@ -7,15 +12,17 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 set(CMAKE_POSITION_INDEPENDENT_CODE 1)
 
 
-# Make sure we use C++11
-set(CMAKE_CXX_STANDARD 11)
+# Make sure we use C++14
+# (mainly because of make_unique which they kinda forgot to add to c++11 )
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 
-# Include PictureIt
-include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends/PictureIt/add_PictureIt.cmake")
-list(APPEND DEPLIBS PictureIt::PictureIt)
+# Include OpenGL
+include(FindOpenGL)
+include_directories(${OPENGL_INCLUDE_DIR})
+list(APPEND DEPLIBS ${OPENGL_gl_LIBRARY} ${OPENGL_LIBRARIES})
 
 
 # Include GLFW
@@ -24,11 +31,14 @@ include_directories(${GLFW_SRC_DIR}/include)
 list(APPEND DEPLIBS glfw ${GLFW_LIBRARIES})
 
 
-# Include libsndfile
-find_package(libsndfile REQUIRED)
-include_directories(${LIBSNDFILE_INCLUDE_DIR})
-include_directories(${LIBSNDFILE_INCLUDE_DIRS})
-list(APPEND DEPLIBS ${LIBSNDFILE_LIBRARY})
+# Include PictureIt
+include("${CMAKE_CURRENT_SOURCE_DIR}/cmake/depends/PictureIt/add_PictureIt.cmake")
+list(APPEND DEPLIBS PictureIt::PictureIt)
+
+# Use local PictureIt source-tree instead
+#add_subdirectory("3rdParty/PictureIt")
+#include_directories("3rdParty/PictureIt/include")
+#list(APPEND DEPLIBS PictureIt::PictureIt)
 
 
 # Include PulseAudio
@@ -38,10 +48,11 @@ list(APPEND DEPLIBS ${PULSEAUDIO_LIBRARY})
 
 
 set(SOURCES src/main.cpp
-            src/audio_player.cpp)
+            src/pulse.cpp)
 
+set(HEADERS src/pulse.hpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES})
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 target_link_libraries(${PROJECT_NAME} ${DEPLIBS})
 
