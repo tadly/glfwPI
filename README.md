@@ -10,7 +10,6 @@ If you're on a typical linux installation (with xorg and pulseaudio) you should 
 
 
 ## Build instructions
-Here, have some Copy&Paste help :)
 ```bash
 git clone https://github.com/Tadly/glfwPI
 cd glfwPI

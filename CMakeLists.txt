@@ -1,28 +1,27 @@
 cmake_minimum_required(VERSION 3.1)
-project(glfwPI CXX)
+
+project(glfwPI LANGUAGES CXX VERSION 0.0.0)
 set(CMAKE_BUILD_TYPE Debug)
 
 if(UNIX)
     add_definitions(-DTARGET_LINUX)
+else()
+    message(FATAL_ERROR "This plattform is NOT supported!")
 endif()
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+
+
+include(GNUInstallDirs)
 
 
 set(CMAKE_POSITION_INDEPENDENT_CODE 1)
 
 
 # Make sure we use C++14
-# (mainly because of make_unique which they kinda forgot to add to c++11 )
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-
-
-# Include OpenGL
-include(FindOpenGL)
-include_directories(${OPENGL_INCLUDE_DIR})
-list(APPEND DEPLIBS ${OPENGL_gl_LIBRARY} ${OPENGL_LIBRARIES})
 
 
 # Include GLFW
@@ -52,8 +51,8 @@ set(SOURCES src/main.cpp
 
 set(HEADERS src/pulse.hpp)
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
+add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 target_link_libraries(${PROJECT_NAME} ${DEPLIBS})
 
 
